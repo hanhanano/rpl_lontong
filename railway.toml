@@ -8,4 +8,4 @@ nixPkgs = ["php83", "php83Packages.composer", "nodejs_20"]
 cmds = ["composer install --optimize-autoloader --no-dev", "npm install"]
 
 [build.nixpacksPlan.phases.build]
-cmds = ["npm run build"]
+cmds = ["npm run build", "php artisan migrate --force"]
