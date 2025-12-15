@@ -1,0 +1,8 @@
+[build]
+builder = "NIXPACKS"
+
+[build.nixpacksPlan]
+providers = ["php"]
+
+[build.nixpacksPlan.phases.setup]
+nixPkgs = ["php83", "php83Extensions.gd", "php83Extensions.zip", "php83Packages.composer", "nodejs_20"]
