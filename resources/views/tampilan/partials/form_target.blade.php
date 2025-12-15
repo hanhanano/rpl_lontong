@@ -5,9 +5,6 @@
     plan_output: 0,
     o_q1: 0, o_q2: 0, o_q3: 0, o_q4: 0,
     
-    {{-- Tambah variabel untuk realisasi poin indikator spesial --}}
-    actual_q1: 0, actual_q2: 0, actual_q3: 0, actual_q4: 0,
-    
     selectedReport: '',
     isMonthly: false,
     
@@ -100,7 +97,7 @@
                 <p class="font-semibold text-amber-800">Indikator Spesial Terdeteksi</p>
                 <p class="text-amber-700 mt-1">
                     Untuk indikator spesial, target dan realisasi dihitung berdasarkan <strong>POIN</strong> (bukan jumlah dokumen). 
-                    Target per triwulan bisa berbeda, dan realisasi diinput manual.
+                    Target per triwulan bisa berbeda. <strong>Realisasi poin diinput di halaman Daftar Publikasi.</strong>
                 </p>
             </div>
         </div>
@@ -170,7 +167,7 @@
         </div>
     </div>
 
-    {{-- BAGIAN 3B: TARGET POIN (Khusus Indikator Spesial) --}}
+    {{-- BAGIAN 3B: TARGET POIN SAJA (Khusus Indikator Spesial) - Hapus Realisasi --}}
     <div x-show="isSpecial" class="border-b pb-4">
         <h4 class="text-sm font-bold text-purple-800 mb-3">Target Poin per Triwulan</h4>
         <p class="text-xs text-gray-500 mb-3">Masukkan target poin yang harus dicapai di setiap triwulan (bisa berbeda-beda)</p>
@@ -196,34 +193,7 @@
                     class="w-full border-purple-300 bg-purple-50 rounded-lg text-sm p-2 focus:ring-purple-500 focus:border-purple-500" placeholder="0">
             </div>
         </div>
-    </div>
-
-    {{-- BAGIAN 4: REALISASI POIN (Khusus Indikator Spesial) --}}
-    <div x-show="isSpecial" class="border-b pb-4">
-        <h4 class="text-sm font-bold text-emerald-800 mb-3">Realisasi Poin per Triwulan</h4>
-        <p class="text-xs text-gray-500 mb-3">Masukkan realisasi poin yang sudah tercapai di setiap triwulan</p>
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div>
-                <label class="block text-xs font-medium text-gray-600 mb-1">Realisasi TW I</label>
-                <input type="number" name="actual_output_q1" x-model="actual_q1" min="0" step="0.01"
-                    class="w-full border-emerald-300 bg-emerald-50 rounded-lg text-sm p-2 focus:ring-emerald-500 focus:border-emerald-500" placeholder="0">
-            </div>
-            <div>
-                <label class="block text-xs font-medium text-gray-600 mb-1">Realisasi TW II</label>
-                <input type="number" name="actual_output_q2" x-model="actual_q2" min="0" step="0.01"
-                    class="w-full border-emerald-300 bg-emerald-50 rounded-lg text-sm p-2 focus:ring-emerald-500 focus:border-emerald-500" placeholder="0">
-            </div>
-            <div>
-                <label class="block text-xs font-medium text-gray-600 mb-1">Realisasi TW III</label>
-                <input type="number" name="actual_output_q3" x-model="actual_q3" min="0" step="0.01"
-                    class="w-full border-emerald-300 bg-emerald-50 rounded-lg text-sm p-2 focus:ring-emerald-500 focus:border-emerald-500" placeholder="0">
-            </div>
-            <div>
-                <label class="block text-xs font-medium text-gray-600 mb-1">Realisasi TW IV</label>
-                <input type="number" name="actual_output_q4" x-model="actual_q4" min="0" step="0.01"
-                    class="w-full border-emerald-300 bg-emerald-50 rounded-lg text-sm p-2 focus:ring-emerald-500 focus:border-emerald-500" placeholder="0">
-            </div>
-        </div>
+        <p class="text-xs text-gray-400 mt-2 italic">* Realisasi poin diinput melalui halaman Daftar Publikasi</p>
     </div>
 
     {{-- BAGIAN 5: OPSI BULANAN (Hanya untuk Indikator Normal) --}}

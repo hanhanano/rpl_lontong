@@ -119,6 +119,27 @@
                     </div>
 
                     <div class="flex flex-col sm:flex-row gap-3 w-full md:w-auto mt-2 md:mt-0">
+                        <a href="{{ route('publications.exportTable') }}" 
+                        x-show="activeTab === 'indikator'" 
+                        x-transition
+                        class="inline-flex items-center justify-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 shadow-sm transition-all w-full sm:w-auto">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4 text-green-600">
+                                <path d="M8.75 2.75a.75.75 0 0 0-1.5 0v5.69L5.03 6.22a.75.75 0 0 0-1.06 1.06l3.5 3.5a.75.75 0 0 0 1.06 0l3.5-3.5a.75.75 0 0 0-1.06-1.06L8.75 8.44V2.75Z" />
+                                <path d="M3.5 9.75a.75.75 0 0 0-1.5 0v1.5A2.75 2.75 0 0 0 4.75 14h6.5A2.75 2.75 0 0 0 14 11.25v-1.5a.75.75 0 0 0-1.5 0v1.5c0 .69-.56 1.25-1.25 1.25h-6.5c-.69 0-1.25-.56-1.25-1.25v-1.5Z" />
+                            </svg>
+                            Unduh Excel (Indikator)
+                        </a>
+
+                        <a href="{{ route('publications.exportSasaran') }}" 
+                        x-show="activeTab === 'sasaran'" 
+                        x-transition
+                        class="inline-flex items-center justify-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 shadow-sm transition-all w-full sm:w-auto">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4 text-green-600">
+                                <path d="M8.75 2.75a.75.75 0 0 0-1.5 0v5.69L5.03 6.22a.75.75 0 0 0-1.06 1.06l3.5 3.5a.75.75 0 0 0 1.06 0l3.5-3.5a.75.75 0 0 0-1.06-1.06L8.75 8.44V2.75Z" />
+                                <path d="M3.5 9.75a.75.75 0 0 0-1.5 0v1.5A2.75 2.75 0 0 0 4.75 14h6.5A2.75 2.75 0 0 0 14 11.25v-1.5a.75.75 0 0 0-1.5 0v1.5c0 .69-.56 1.25-1.25 1.25h-6.5c-.69 0-1.25-.56-1.25-1.25v-1.5Z" />
+                            </svg>
+                            Unduh Excel (Sasaran/Laporan)
+                        </a>
                         <div class="flex bg-gray-100 p-1 rounded-lg w-full sm:w-auto">
                             <button @click="activeTab = 'indikator'" 
                                 :class="activeTab === 'indikator' ? 'bg-white text-blue-700 shadow-sm ring-1 ring-gray-200' : 'text-gray-500 hover:text-gray-700'"
@@ -228,19 +249,39 @@
                         {{-- TABEL 2: INDIKATOR SPESIAL (3 Indikator dengan 4 Laporan) --}}
                         <table x-show="activeTab === 'spesial'" x-cloak class="w-full text-sm text-center border-collapse whitespace-nowrap">
                             <thead class="text-xs"> 
-                                <tr class="bg-amber-100 text-amber-900 font-semibold border-b h-[40px]">
-                                    <th rowspan="2" class="px-4 py-2 min-w-[300px] text-left align-middle bg-amber-100 sticky-col-1 border-r border-amber-300">Nama Indikator Spesial</th>
-                                    <th colspan="4" class="px-2 py-1 border-r bg-blue-50 text-blue-900 border-b border-blue-200">Target Poin per TW</th>
-                                    <th colspan="4" class="px-2 py-1 border-r bg-emerald-50 text-emerald-900 border-b border-emerald-200">Realisasi Poin per TW</th>
-                                    <th colspan="4" class="px-2 py-1 border-r bg-indigo-50 text-indigo-900 border-b border-indigo-200">Capaian vs Target TW (%)</th>
-                                    <th colspan="4" class="px-2 py-1 bg-emerald-100 text-emerald-900 border-b border-emerald-200">Capaian vs Target Tahun (%)</th>
+                                <tr class="bg-gray-100 text-gray-700 font-semibold border-b h-[40px]">
+                                    <th rowspan="3" class="px-4 py-2 min-w-[280px] w-[280px] text-left align-middle bg-gray-100 sticky-col-1 border-r border-gray-300">Nama Indikator</th>
+                                    <th rowspan="3" class="px-3 py-2 w-32 align-middle bg-gray-100 sticky-col-2 sticky-col-shadow border-r border-gray-300">Jenis</th>
+                                    <th colspan="4" class="px-2 py-1 border-r bg-blue-50 text-blue-900 border-b border-blue-200 sticky top-0 z-40">Rencana Kegiatan</th>
+                                    <th colspan="4" class="px-2 py-1 border-r bg-emerald-50 text-emerald-900 border-b border-emerald-200 sticky top-0 z-40">Realisasi Kegiatan</th>
+                                    <th colspan="8" class="px-2 py-1 bg-purple-50 text-purple-900 border-b border-purple-200 sticky top-0 z-40">Capaian Kinerja (%)</th>
                                 </tr>
                                 
-                                <tr class="text-[11px] font-medium border-b h-[35px] bg-gray-50">
-                                    @for($i=1; $i<=4; $i++) <th class="px-2 py-1 border-r bg-blue-50 text-gray-600">TW {{ $i }}</th> @endfor
-                                    @for($i=1; $i<=4; $i++) <th class="px-2 py-1 border-r bg-emerald-50 text-gray-600">TW {{ $i }}</th> @endfor
-                                    @for($i=1; $i<=4; $i++) <th class="px-2 py-1 border-r bg-indigo-50 text-gray-600">TW {{ $i }}</th> @endfor
-                                    @for($i=1; $i<=4; $i++) <th class="px-2 py-1 {{ $i < 4 ? 'border-r' : '' }} bg-emerald-50 text-gray-600">TW {{ $i }}</th> @endfor
+                                <tr class="text-[11px] font-medium border-b h-[35px]">
+                                    <th class="px-2 py-1 border-r bg-blue-50 text-gray-600 min-w-[60px] sticky top-[40px] z-40" rowspan="2">TW I</th>
+                                    <th class="px-2 py-1 border-r bg-blue-50 text-gray-600 min-w-[60px] sticky top-[40px] z-40" rowspan="2">TW II</th>
+                                    <th class="px-2 py-1 border-r bg-blue-50 text-gray-600 min-w-[60px] sticky top-[40px] z-40" rowspan="2">TW III</th>
+                                    <th class="px-2 py-1 border-r bg-blue-50 text-gray-600 min-w-[60px] sticky top-[40px] z-40" rowspan="2">TW IV</th>
+                                    
+                                    <th class="px-2 py-1 border-r bg-emerald-50 text-gray-600 min-w-[60px] sticky top-[40px] z-40" rowspan="2">TW I</th>
+                                    <th class="px-2 py-1 border-r bg-emerald-50 text-gray-600 min-w-[60px] sticky top-[40px] z-40" rowspan="2">TW II</th>
+                                    <th class="px-2 py-1 border-r bg-emerald-50 text-gray-600 min-w-[60px] sticky top-[40px] z-40" rowspan="2">TW III</th>
+                                    <th class="px-2 py-1 border-r bg-emerald-50 text-gray-600 min-w-[60px] sticky top-[40px] z-40" rowspan="2">TW IV</th>
+                                    
+                                    <th colspan="4" class="px-2 py-1 border-r border-b bg-indigo-50 text-indigo-900 sticky top-[40px] z-40">Terhadap Target TW</th>
+                                    <th colspan="4" class="px-2 py-1 border-b bg-emerald-100 text-emerald-900 sticky top-[40px] z-40">Terhadap Target Tahun</th>
+                                </tr>
+
+                                <tr class="text-[10px] text-gray-500 font-medium border-b">
+                                    <th class="px-1 py-1 border-r bg-indigo-50 sticky top-[75px] z-30">TW I</th>
+                                    <th class="px-1 py-1 border-r bg-indigo-50 sticky top-[75px] z-30">TW II</th>
+                                    <th class="px-1 py-1 border-r bg-indigo-50 sticky top-[75px] z-30">TW III</th>
+                                    <th class="px-1 py-1 border-r bg-indigo-50 sticky top-[75px] z-30">TW IV</th>
+                                    
+                                    <th class="px-1 py-1 border-r bg-emerald-50 sticky top-[75px] z-30">TW I</th>
+                                    <th class="px-1 py-1 border-r bg-emerald-50 sticky top-[75px] z-30">TW II</th>
+                                    <th class="px-1 py-1 border-r bg-emerald-50 sticky top-[75px] z-30">TW III</th>
+                                    <th class="px-1 py-1 bg-emerald-50 sticky top-[75px] z-30">TW IV</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -252,6 +293,7 @@
                                         </div>
                                         <span class="inline-block mt-1 px-2 py-0.5 text-[10px] bg-amber-100 text-amber-800 rounded-full">Spesial</span>
                                     </td>
+                                    <td class="px-2 py-2 font-medium text-blue-900 bg-blue-50 text-[10px] sticky-col-2 sticky-col-shadow align-middle">Poin</td>
                                     
                                     {{-- Target Poin per TW --}}
                                     @for($i=1; $i<=4; $i++) 
@@ -294,83 +336,188 @@
                         </table>
 
                         {{-- TABEL 3: DETAIL SASARAN/LAPORAN (Normal + Spesial) --}}
-                        <table x-show="activeTab === 'sasaran'" x-cloak class="w-full text-sm text-center border-collapse whitespace-nowrap">
+                        <table x-show="activeTab === 'sasaran'" class="w-full text-sm text-center border-collapse whitespace-nowrap" style="display: none;">
                             <thead class="text-xs"> 
+                                
                                 <tr class="bg-gray-100 text-gray-700 font-semibold border-b h-[40px]">
-                                    <th rowspan="2" class="px-4 py-2 min-w-[300px] text-left align-middle bg-gray-100 sticky-col-1 border-r border-gray-300">Nama Sasaran/Laporan</th>
-                                    <th rowspan="2" class="px-3 py-2 w-20 align-middle bg-gray-100 border-r border-gray-300">Tipe</th>
-                                    <th colspan="4" class="px-2 py-1 border-r bg-blue-50 text-blue-900 border-b border-blue-200">Target</th>
-                                    <th colspan="4" class="px-2 py-1 border-r bg-emerald-50 text-emerald-900 border-b border-emerald-200">Realisasi</th>
-                                    <th colspan="4" class="px-2 py-1 bg-purple-50 text-purple-900 border-b border-purple-200">Capaian Tahun (%)</th>
+                                    <th rowspan="3" class="px-4 py-2 min-w-[280px] w-[280px] text-left align-middle bg-gray-100 sticky-col-1 border-r border-gray-300">Nama Indikator</th> {{-- Ganti padding jadi py-2 --}}
+                                    <th rowspan="3" class="px-3 py-2 w-32 align-middle bg-gray-100 sticky-col-2 sticky-col-shadow border-r border-gray-300">Jenis</th>
+                                    <th colspan="4" class="px-2 py-1 border-r bg-blue-50 text-blue-900 border-b border-blue-200 sticky top-0 z-40">Rencana Kegiatan</th>
+                                    <th colspan="4" class="px-2 py-1 border-r bg-emerald-50 text-emerald-900 border-b border-emerald-200 sticky top-0 z-40">Realisasi Kegiatan</th>
+                                    <th colspan="8" class="px-2 py-1 bg-purple-50 text-purple-900 border-b border-purple-200 sticky top-0 z-40">Capaian Kinerja (%)</th>
                                 </tr>
                                 
-                                <tr class="text-[11px] font-medium border-b h-[35px] bg-gray-50">
-                                    @for($i=1; $i<=4; $i++) <th class="px-2 py-1 border-r bg-blue-50 text-gray-600">TW {{ $i }}</th> @endfor
-                                    @for($i=1; $i<=4; $i++) <th class="px-2 py-1 border-r bg-emerald-50 text-gray-600">TW {{ $i }}</th> @endfor
-                                    @for($i=1; $i<=4; $i++) <th class="px-2 py-1 {{ $i < 4 ? 'border-r' : '' }} bg-purple-50 text-gray-600">TW {{ $i }}</th> @endfor
+                                <tr class="text-[11px] font-medium border-b h-[35px]">
+                                    <th class="px-2 py-1 border-r bg-blue-50 text-gray-600 min-w-[60px] sticky top-[40px] z-40" rowspan="2">Triwulan I</th>
+                                    <th class="px-2 py-1 border-r bg-blue-50 text-gray-600 min-w-[60px] sticky top-[40px] z-40" rowspan="2">Triwulan II</th>
+                                    <th class="px-2 py-1 border-r bg-blue-50 text-gray-600 min-w-[60px] sticky top-[40px] z-40" rowspan="2">Triwulan III</th>
+                                    <th class="px-2 py-1 border-r bg-blue-50 text-gray-600 min-w-[60px] sticky top-[40px] z-40" rowspan="2">Triwulan IV</th>
+                                    
+                                    <th class="px-2 py-1 border-r bg-emerald-50 text-gray-600 min-w-[60px] sticky top-[40px] z-40" rowspan="2">Triwulan I</th>
+                                    <th class="px-2 py-1 border-r bg-emerald-50 text-gray-600 min-w-[60px] sticky top-[40px] z-40" rowspan="2">Triwulan II</th>
+                                    <th class="px-2 py-1 border-r bg-emerald-50 text-gray-600 min-w-[60px] sticky top-[40px] z-40" rowspan="2">Triwulan III</th>
+                                    <th class="px-2 py-1 border-r bg-emerald-50 text-gray-600 min-w-[60px] sticky top-[40px] z-40" rowspan="2">Triwulan IV</th>
+                                    
+                                    <th colspan="4" class="px-2 py-1 border-r border-b bg-indigo-50 text-indigo-900 sticky top-[40px] z-40">Terhadap Target Triwulan</th>
+                                    <th colspan="4" class="px-2 py-1 border-b bg-emerald-100 text-emerald-900 sticky top-[40px] z-40">Terhadap Target THN</th>
+                                </tr>
+
+                                <tr class="text-[10px] text-gray-500 font-medium border-b">
+                                    <th class="px-1 py-1 border-r bg-indigo-50 sticky top-[75px] z-30">Triwulan I</th>
+                                    <th class="px-1 py-1 border-r bg-indigo-50 sticky top-[75px] z-30">Triwulan II</th>
+                                    <th class="px-1 py-1 border-r bg-indigo-50 sticky top-[75px] z-30">Triwulan III</th>
+                                    <th class="px-1 py-1 border-r bg-indigo-50 sticky top-[75px] z-30">Triwulan IV</th>
+                                    
+                                    <th class="px-1 py-1 border-r bg-emerald-50 sticky top-[75px] z-30">Triwulan I</th>
+                                    <th class="px-1 py-1 border-r bg-emerald-50 sticky top-[75px] z-30">Triwulan II</th>
+                                    <th class="px-1 py-1 border-r bg-emerald-50 sticky top-[75px] z-30">Triwulan III</th>
+                                    <th class="px-1 py-1 bg-emerald-50 sticky top-[75px] z-30">Triwulan IV</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                {{-- Sasaran Normal --}}
+                            <tbody class="group border-b border-gray-200 bg-white">
                                 @foreach($laporanKinerjaSasaran as $row)
-                                <tr class="border-b border-gray-200 hover:bg-gray-50 transition">
-                                    <td class="px-4 py-3 text-left align-middle border-r border-gray-200 bg-white">
+                                <tr class="hover:bg-blue-50 transition">
+                                    <td rowspan="4" class="px-4 py-2 text-left align-top border-r border-gray-200 sticky-col-1 bg-white group-hover:bg-blue-50 transition-colors duration-200">
                                         <div class="font-medium text-gray-800 text-xs whitespace-normal leading-snug">{{ $row['report_name'] }}</div>
                                     </td>
-                                    <td class="px-2 py-2 border-r align-middle">
-                                        <span class="px-2 py-0.5 text-[10px] bg-blue-100 text-blue-800 rounded-full">Normal</span>
-                                    </td>
-                                    {{-- Target Output (sama tiap TW) --}}
-                                    @for($i=1; $i<=4; $i++) 
-                                        <td class="px-2 py-2 text-blue-800 bg-blue-50/30 border-r align-middle font-medium">{{ $row['data']['row4_blue'][$i] ?? 0 }}</td> 
+                                    <td class="px-2 py-2 font-medium text-blue-900 bg-blue-50 text-[10px] sticky-col-2 sticky-col-shadow align-middle">Realisasi Tahapan</td>
+
+                                    @for($i=1; $i<=4; $i++)
+                                        <td class="px-2 py-2 text-blue-800 bg-blue-50/30 border-r align-middle font-medium">{{ $row['data']['row1_blue'][$i] ?? 0 }}</td>
                                     @endfor
-                                    {{-- Realisasi Output (kumulatif) --}}
-                                    @for($i=1; $i<=4; $i++) 
-                                        <td class="px-2 py-2 text-emerald-700 border-r align-middle bg-emerald-50/20 font-medium">{{ $row['data']['row3_green'][$i] ?? 0 }}</td> 
+                                    @for($i=1; $i<=4; $i++)
+                                        <td class="px-2 py-2 text-emerald-700 border-r align-middle bg-emerald-50/20 font-medium">{{ $row['data']['row1_green'][$i] ?? 0 }}</td>
                                     @endfor
-                                    {{-- Capaian Output --}}
-                                    @for($i=1; $i<=4; $i++) 
-                                        @php $val = $row['capaian']['output']['thn'][$i] ?? 0; @endphp 
-                                        <td class="px-2 py-2 {{ $i < 4 ? 'border-r' : '' }} align-middle bg-purple-50/10">
+                                    @for($i=1; $i<=4; $i++)
+                                        @php $val = $row['capaian']['tahapan']['tw'][$i] ?? 0; @endphp
+                                        <td rowspan="2" class="px-2 py-2 border-r align-middle bg-indigo-50/10 border-b group-hover:bg-indigo-50 transition-colors">
                                             <span class="{{ $val >= 100 ? 'text-green-600 font-medium' : ($val > 0 ? 'text-blue-600' : 'text-gray-400') }}">{{ number_format($val, 0) }}%</span>
-                                        </td> 
+                                        </td>
+                                    @endfor
+                                    @for($i=1; $i<=4; $i++)
+                                        @php $val = $row['capaian']['tahapan']['thn'][$i] ?? 0; @endphp
+                                        <td rowspan="2" class="px-2 py-2 bg-emerald-50/10 border-r last:border-r-0 align-middle border-b group-hover:bg-emerald-50 transition-colors">
+                                            <span class="{{ $val >= 100 ? 'text-green-600 font-medium' : ($val > 0 ? 'text-blue-600' : 'text-gray-400') }}">{{ number_format($val, 0) }}%</span>
+                                        </td>
+                                    @endfor
+                                </tr>
+                                
+                                <tr class="hover:bg-gray-50 transition border-b border-gray-200">
+                                    <td class="px-2 py-2 font-medium text-gray-500 bg-white text-[10px] sticky-col-2 sticky-col-shadow align-middle group-hover:bg-gray-50">Target Tahapan</td>
+                                    @for($i=1; $i<=4; $i++)
+                                        <td class="px-2 py-2 text-gray-600 border-r align-middle font-medium hover:bg-gray-50">{{ $row['data']['row2_blue'][$i] ?? 0 }}</td>
+                                    @endfor
+                                    @for($i=1; $i<=4; $i++)
+                                        <td class="px-2 py-2 text-gray-600 border-r align-middle bg-gray-50/30 hover:bg-gray-50 font-medium">{{ $row['data']['row2_green'][$i] ?? 0 }}</td>
+                                    @endfor
+                                </tr>
+                                
+                                <tr class="hover:bg-purple-50 transition">
+                                    <td class="px-2 py-2 font-medium text-purple-900 bg-purple-50 text-[10px] sticky-col-2 sticky-col-shadow align-middle">Realisasi Output</td>
+                                    @for($i=1; $i<=4; $i++)
+                                        <td class="px-2 py-2 text-purple-800 bg-gray-50/30 border-r align-middle font-medium">{{ $row['data']['row3_blue'][$i] ?? 0 }}</td>
+                                    @endfor
+                                    @for($i=1; $i<=4; $i++)
+                                        <td class="px-2 py-2 text-emerald-700 border-r align-middle bg-emerald-50/20 font-medium">{{ $row['data']['row3_green'][$i] ?? 0 }}</td>
+                                    @endfor
+                                    @for($i=1; $i<=4; $i++)
+                                        @php $val = $row['capaian']['output']['tw'][$i] ?? 0; @endphp
+                                        <td rowspan="2" class="px-2 py-2 border-r align-middle bg-indigo-50/10 border-b group-hover:bg-indigo-50 transition-colors">
+                                            <span class="{{ $val >= 100 ? 'text-green-600 font-medium' : ($val > 0 ? 'text-blue-600' : 'text-gray-400') }}">{{ number_format($val, 0) }}%</span>
+                                        </td>
+                                    @endfor
+                                    @for($i=1; $i<=4; $i++)
+                                        @php $val = $row['capaian']['output']['thn'][$i] ?? 0; @endphp
+                                        <td rowspan="2" class="px-2 py-2 bg-emerald-50/10 border-r last:border-r-0 align-middle border-b group-hover:bg-emerald-50 transition-colors">
+                                            <span class="{{ $val >= 100 ? 'text-green-600 font-medium' : ($val > 0 ? 'text-blue-600' : 'text-gray-400') }}">{{ number_format($val, 0) }}%</span>
+                                        </td>
+                                    @endfor
+                                </tr>
+
+                                <tr class="hover:bg-gray-50 transition border-b border-gray-300">
+                                    <td class="px-2 py-2 font-medium text-gray-500 bg-white text-[10px] sticky-col-2 sticky-col-shadow align-middle group-hover:bg-gray-50">Target Output</td>
+                                    @for($i=1; $i<=4; $i++)
+                                        <td class="px-2 py-2 text-gray-600 border-r align-middle font-medium hover:bg-gray-50">{{ $row['data']['row4_blue'][$i] ?? 0 }}</td>
+                                    @endfor
+                                    @for($i=1; $i<=4; $i++)
+                                        <td class="px-2 py-2 text-gray-600 border-r align-middle bg-gray-50/30 hover:bg-gray-50 font-medium">{{ $row['data']['row4_green'][$i] ?? 0 }}</td>
                                     @endfor
                                 </tr>
                                 @endforeach
-
-                                {{-- Sasaran Spesial --}}
+                                
                                 @foreach($laporanKinerjaSpesialSasaran as $row)
                                 <tr class="border-b border-gray-200 hover:bg-amber-50 transition">
-                                    <td class="px-4 py-3 text-left align-middle border-r border-gray-200 bg-white">
+                                    <td rowspan="2" class="px-4 py-2 text-left align-top border-r border-gray-200 sticky-col-1 bg-white hover:bg-amber-50 transition-colors duration-200">
                                         <div class="font-medium text-gray-800 text-xs whitespace-normal leading-snug">{{ $row['report_name'] }}</div>
                                     </td>
-                                    <td class="px-2 py-2 border-r align-middle">
-                                        <span class="px-2 py-0.5 text-[10px] bg-amber-100 text-amber-800 rounded-full">Spesial</span>
+                                    <td class="px-2 py-2 border-r align-middle sticky-col-2 sticky-col-shadow bg-white hover:bg-amber-50">
+                                        <span class="px-2 py-0.5 text-[10px] bg-amber-100 text-amber-800 rounded-full font-medium">Spesial</span>
                                     </td>
+                                    
                                     {{-- Target Poin per TW --}}
-                                    @for($i=1; $i<=4; $i++) 
-                                        <td class="px-2 py-2 text-blue-800 bg-blue-50/30 border-r align-middle font-medium">{{ number_format($row['data']['target_q'][$i] ?? 0, 2) }}</td> 
+                                    @for($i=1; $i<=4; $i++)
+                                        <td class="px-2 py-2 text-blue-800 bg-blue-50/30 border-r align-middle font-medium">{{ number_format($row['data']['target_q'][$i] ?? 0, 2) }}</td>
                                     @endfor
+                                    
                                     {{-- Realisasi Poin per TW --}}
-                                    @for($i=1; $i<=4; $i++) 
-                                        <td class="px-2 py-2 text-emerald-700 border-r align-middle bg-emerald-50/20 font-medium">{{ number_format($row['data']['actual_q'][$i] ?? 0, 2) }}</td> 
+                                    @for($i=1; $i<=4; $i++)
+                                        <td class="px-2 py-2 text-emerald-700 border-r align-middle bg-emerald-50/20 font-medium">{{ number_format($row['data']['actual_q'][$i] ?? 0, 2) }}</td>
                                     @endfor
-                                    {{-- Capaian Output --}}
+                                    
+                                    {{-- Capaian terhadap Target Triwulan --}}
+                                    <!-- @for($i=1; $i<=4; $i++)
+                                        @php
+                                            $target = $row['data']['target_q'][$i] ?? 0;
+                                            $realisasi = $row['data']['actual_q'][$i] ?? 0;
+                                            $val = $target > 0 ? ($realisasi / $target * 100) : 0;
+                                        @endphp
+                                        <td class="px-2 py-2 border-r align-middle bg-indigo-50/10 border-b hover:bg-indigo-50 transition-colors">
+                                            <span class="{{ $val >= 100 ? 'text-green-600 font-medium' : ($val > 0 ? 'text-blue-600' : 'text-gray-400') }}">{{ number_format($val, 1) }}%</span>
+                                        </td>
+                                    @endfor
+                                    
+                                    {{-- Capaian terhadap Target Tahun --}}
+                                    @for($i=1; $i<=4; $i++)
+                                        @php
+                                            // Target tahunan adalah target TW4
+                                            $targetTahunan = $row['data']['target_q'][4] ?? 0;
+                                            $realisasiKumulatif = 0;
+                                            for($j=1; $j<=$i; $j++) {
+                                                $realisasiKumulatif += $row['data']['actual_q'][$j] ?? 0;
+                                            }
+                                            $val = $targetTahunan > 0 ? ($realisasiKumulatif / $targetTahunan * 100) : 0;
+                                        @endphp
+                                        <td class="px-2 py-2 bg-emerald-50/10 {{ $i < 4 ? 'border-r' : '' }} align-middle border-b hover:bg-emerald-50 transition-colors">
+                                            <span class="{{ $val >= 100 ? 'text-green-600 font-medium' : ($val > 0 ? 'text-blue-600' : 'text-gray-400') }}">{{ number_format($val, 1) }}%</span>
+                                        </td>
+                                    @endfor -->
+                                    {{-- Capaian vs Target TW --}}
+                                    @for($i=1; $i<=4; $i++) 
+                                        @php $val = $row['capaian']['output']['tw'][$i] ?? 0; @endphp 
+                                        <td class="px-2 py-2 border-r align-middle bg-indigo-50/10">
+                                            <span class="{{ $val >= 100 ? 'text-green-600 font-medium' : ($val > 0 ? 'text-blue-600' : 'text-gray-400') }}">
+                                                {{ number_format($val, 1) }}%
+                                            </span>
+                                        </td> 
+                                    @endfor
+                                    
+                                    {{-- Capaian vs Target Tahun --}}
                                     @for($i=1; $i<=4; $i++) 
                                         @php $val = $row['capaian']['output']['thn'][$i] ?? 0; @endphp 
-                                        <td class="px-2 py-2 {{ $i < 4 ? 'border-r' : '' }} align-middle bg-purple-50/10">
-                                            <span class="{{ $val >= 100 ? 'text-green-600 font-medium' : ($val > 0 ? 'text-blue-600' : 'text-gray-400') }}">{{ number_format($val, 1) }}%</span>
+                                        <td class="px-2 py-2 {{ $i < 4 ? 'border-r' : '' }} align-middle bg-emerald-50/10">
+                                            <span class="{{ $val >= 100 ? 'text-green-600 font-medium' : ($val > 0 ? 'text-blue-600' : 'text-gray-400') }}">
+                                                {{ number_format($val, 1) }}%
+                                            </span>
                                         </td> 
                                     @endfor
                                 </tr>
+                                
+                                {{-- Baris kedua untuk data tambahan --}}
+                                <tr class="border-b border-gray-200 hover:bg-amber-50/30 transition"></tr>
                                 @endforeach
-
-                                @if(count($laporanKinerjaSasaran) === 0 && count($laporanKinerjaSpesialSasaran) === 0)
-                                <tr><td colspan="14" class="text-center py-8 text-gray-500">Tidak ada data sasaran/laporan</td></tr>
-                                @endif
                             </tbody>
+                            <!-- <tbody><tr><td colspan="22" class="px-4 py-8 text-center text-gray-500 italic">Belum ada data.</td></tr></tbody> -->
                         </table>
-
                     </div>
                 </div>
 

@@ -14,11 +14,8 @@ use Carbon\Carbon;
 class TeamTargetController extends Controller
 {
     private const SPECIAL_INDICATORS = [
-        // Indikator 1: 1 Laporan
         "Tingkat Penyelenggaraan Pembinaan Statistik Sektoral sesuai Standar",
-        // Indikator 2: 1 Laporan
         "Indeks Pelayanan Publik - Penilaian Mandiri",
-        // Indikator 3: 2 Laporan
         "Nilai SAKIP oleh Inspektorat",
         "Indeks Implementasi BerAKHLAK",
     ];
@@ -156,10 +153,10 @@ class TeamTargetController extends Controller
                     'output_real_q3' => $request->input('output_real_q3', 0),
                     'output_real_q4' => $request->input('output_real_q4', 0),
 
-                    'actual_output_q1' => $request->input('actual_output_q1', 0),
-                    'actual_output_q2' => $request->input('actual_output_q2', 0),
-                    'actual_output_q3' => $request->input('actual_output_q3', 0),
-                    'actual_output_q4' => $request->input('actual_output_q4', 0),
+                    'actual_output_q1' => 0,
+                    'actual_output_q2' => 0,
+                    'actual_output_q3' => 0,
+                    'actual_output_q4' => 0,
                     
                     'is_special_indicator' => $isSpecial,
                 ]);
@@ -219,11 +216,6 @@ class TeamTargetController extends Controller
             'output_real_q2' => $request->input('output_real_q2', 0),
             'output_real_q3' => $request->input('output_real_q3', 0),
             'output_real_q4' => $request->input('output_real_q4', 0),
-
-            'actual_output_q1' => $request->input('actual_output_q1', 0),
-            'actual_output_q2' => $request->input('actual_output_q2', 0),
-            'actual_output_q3' => $request->input('actual_output_q3', 0),
-            'actual_output_q4' => $request->input('actual_output_q4', 0),
             
             'is_special_indicator' => $isSpecial,
         ]);
@@ -248,8 +240,32 @@ class TeamTargetController extends Controller
         return redirect()->back()->with('success', 'Data berhasil diupdate');
     }
 
-    // --- HELPER FUNCTIONS ---
+    public function updateRealisasiPoin(Request $request, $id)
+    {
+        $request->validate([
+            'actual_output_q1' => 'nullable|numeric|min:0',
+            'actual_output_q2' => 'nullable|numeric|min:0',
+            'actual_output_q3' => 'nullable|numeric|min:0',
+            'actual_output_q4' => 'nullable|numeric|min:0',
+        ]);
 
+        $target = TeamTarget::findOrFail($id);
+
+        if (!self::isSpecialIndicator($target->report_name)) {
+            return redirect()->back()->with('error', 'Hanya indikator spesial yang bisa diupdate realisasi poinnya.');
+        }
+
+        $target->update([
+            'actual_output_q1' => $request->input('actual_output_q1', 0),
+            'actual_output_q2' => $request->input('actual_output_q2', 0),
+            'actual_output_q3' => $request->input('actual_output_q3', 0),
+            'actual_output_q4' => $request->input('actual_output_q4', 0),
+        ]);
+
+        return redirect()->back()->with('success', 'Realisasi poin berhasil diupdate!');
+    }
+
+    // --- HELPER FUNCTIONS ---
     private function syncSimpleSteps($publicationId, $targetCount)
     {
         $targetCount = (int)$targetCount;
@@ -373,10 +389,10 @@ class TeamTargetController extends Controller
                 'output_real_q3' => $request->input('output_real_q3', 0), 
                 'output_real_q4' => $request->input('output_real_q4', 0),
 
-                'actual_output_q1' => $request->input('actual_output_q1', 0),
-                'actual_output_q2' => $request->input('actual_output_q2', 0),
-                'actual_output_q3' => $request->input('actual_output_q3', 0),
-                'actual_output_q4' => $request->input('actual_output_q4', 0),
+                'actual_output_q1' => 0,
+                'actual_output_q2' => 0,
+                'actual_output_q3' => 0,
+                'actual_output_q4' => 0,
                 
                 'is_special_indicator' => $isSpecial,
             ]);
