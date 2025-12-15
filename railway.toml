@@ -1,8 +1,11 @@
 [build]
-builder = "NIXPACKS"
-
-[build.nixpacksPlan]
-providers = ["php"]
+builder = "nixpacks"
 
 [build.nixpacksPlan.phases.setup]
-nixPkgs = ["php83", "php83Extensions.gd", "php83Extensions.zip", "php83Packages.composer", "nodejs_20"]
+nixPkgs = ["php83", "php83Packages.composer", "nodejs_20"]
+
+[build.nixpacksPlan.phases.install]
+cmds = ["composer install --optimize-autoloader --no-dev", "npm install"]
+
+[build.nixpacksPlan.phases.build]
+cmds = ["npm run build"]
