@@ -36,10 +36,15 @@ class TeamTarget extends Model
     ];
 
     protected $casts = [
+        'output_real_q1' => 'decimal:2', // 2 digit desimal
+        'output_real_q2' => 'decimal:2',
+        'output_real_q3' => 'decimal:2',
+        'output_real_q4' => 'decimal:2',
         'actual_output_q1' => 'decimal:2',
         'actual_output_q2' => 'decimal:2',
         'actual_output_q3' => 'decimal:2',
         'actual_output_q4' => 'decimal:2',
+        'is_special_indicator' => 'boolean',
     ];
 
     public function publication()

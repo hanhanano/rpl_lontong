@@ -78,6 +78,11 @@ class TeamTargetController extends Controller
             'is_monthly' => 'nullable|boolean',
             'months' => 'nullable|array',
             'months.*' => 'integer|between:1,12',
+            // Tambahkan validasi untuk poin (boleh desimal)
+            'output_real_q1' => 'nullable|numeric|min:0',
+            'output_real_q2' => 'nullable|numeric|min:0',
+            'output_real_q3' => 'nullable|numeric|min:0',
+            'output_real_q4' => 'nullable|numeric|min:0',
         ]);
 
         $user = auth()->user();
@@ -135,9 +140,9 @@ class TeamTargetController extends Controller
                     'publication_id' => $publicationId,
                     
                     'q1_plan' => $request->input('q1_plan', 0), 
-                    'q2_plan' => $request->input('q2_plan', 0),
-                    'q3_plan' => $request->input('q3_plan', 0), 
-                    'q4_plan' => $request->input('q4_plan', 0),
+                    'q2_plan' => $request->input('q1_plan', 0),
+                    'q3_plan' => $request->input('q1_plan', 0), 
+                    'q4_plan' => $request->input('q1_plan', 0),
                     
                     'q1_real' => $request->input('q1_real', 0), 
                     'q2_real' => $request->input('q2_real', 0),
@@ -180,6 +185,16 @@ class TeamTargetController extends Controller
 
     public function update(Request $request, $id) 
     {
+        $request->validate([
+            'publication_name' => 'required|string|max:255|min:3',
+            'publication_pic'  => 'required|string|max:255|min:3',
+            // Tambahkan validasi untuk poin (boleh desimal)
+            'output_real_q1' => 'nullable|numeric|min:0',
+            'output_real_q2' => 'nullable|numeric|min:0',
+            'output_real_q3' => 'nullable|numeric|min:0',
+            'output_real_q4' => 'nullable|numeric|min:0',
+        ]);
+
         $reportName = ($request->publication_report === 'other') 
             ? $request->publication_report_other 
             : $request->publication_report;
@@ -199,9 +214,9 @@ class TeamTargetController extends Controller
             'report_name'   => $reportName,
             
             'q1_plan' => $request->input('q1_plan', 0), 
-            'q2_plan' => $request->input('q2_plan', 0),
-            'q3_plan' => $request->input('q3_plan', 0), 
-            'q4_plan' => $request->input('q4_plan', 0),
+            'q2_plan' => $request->input('q1_plan', 0),
+            'q3_plan' => $request->input('q1_plan', 0), 
+            'q4_plan' => $request->input('q1_plan', 0),
             
             'q1_real' => $request->input('q1_real', 0), 
             'q2_real' => $request->input('q2_real', 0),
@@ -373,9 +388,9 @@ class TeamTargetController extends Controller
                 'publication_id' => $publicationId,
                 
                 'q1_plan' => $request->input('q1_plan', 0), 
-                'q2_plan' => $request->input('q2_plan', 0), 
-                'q3_plan' => $request->input('q3_plan', 0), 
-                'q4_plan' => $request->input('q4_plan', 0),
+                'q2_plan' => $request->input('q1_plan', 0), 
+                'q3_plan' => $request->input('q1_plan', 0), 
+                'q4_plan' => $request->input('q1_plan', 0),
                 'q1_real' => $request->input('q1_real', 0), 
                 'q2_real' => $request->input('q2_real', 0), 
                 'q3_real' => $request->input('q3_real', 0), 

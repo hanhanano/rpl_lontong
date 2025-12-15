@@ -119,6 +119,7 @@
                     </div>
 
                     <div class="flex flex-col sm:flex-row gap-3 w-full md:w-auto mt-2 md:mt-0">
+                        {{-- Tombol export untuk Tab Indikator Normal --}}
                         <a href="{{ route('publications.exportTable') }}" 
                         x-show="activeTab === 'indikator'" 
                         x-transition
@@ -130,6 +131,19 @@
                             Unduh Excel (Indikator)
                         </a>
 
+                        {{-- Tombol export untuk Tab Indikator Spesial --}}
+                        <a href="{{ route('publications.exportSpesialIndikator') }}" 
+                        x-show="activeTab === 'spesial'" 
+                        x-transition
+                        class="inline-flex items-center justify-center gap-2 px-4 py-2 bg-white border border-amber-300 rounded-lg text-sm font-medium text-amber-700 hover:bg-amber-50 shadow-sm transition-all w-full sm:w-auto">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4 text-amber-600">
+                                <path d="M8.75 2.75a.75.75 0 0 0-1.5 0v5.69L5.03 6.22a.75.75 0 0 0-1.06 1.06l3.5 3.5a.75.75 0 0 0 1.06 0l3.5-3.5a.75.75 0 0 0-1.06-1.06L8.75 8.44V2.75Z" />
+                                <path d="M3.5 9.75a.75.75 0 0 0-1.5 0v1.5A2.75 2.75 0 0 0 4.75 14h6.5A2.75 2.75 0 0 0 14 11.25v-1.5a.75.75 0 0 0-1.5 0v1.5c0 .69-.56 1.25-1.25 1.25h-6.5c-.69 0-1.25-.56-1.25-1.25v-1.5Z" />
+                            </svg>
+                            Unduh Excel (Indikator Spesial)
+                        </a>
+
+                        {{-- Tombol export untuk Tab Detail Sasaran (gabungan normal + spesial) --}}
                         <a href="{{ route('publications.exportSasaran') }}" 
                         x-show="activeTab === 'sasaran'" 
                         x-transition
@@ -140,6 +154,7 @@
                             </svg>
                             Unduh Excel (Sasaran/Laporan)
                         </a>
+                        
                         <div class="flex bg-gray-100 p-1 rounded-lg w-full sm:w-auto">
                             <button @click="activeTab = 'indikator'" 
                                 :class="activeTab === 'indikator' ? 'bg-white text-blue-700 shadow-sm ring-1 ring-gray-200' : 'text-gray-500 hover:text-gray-700'"
@@ -464,33 +479,6 @@
                                         <td class="px-2 py-2 text-emerald-700 border-r align-middle bg-emerald-50/20 font-medium">{{ number_format($row['data']['actual_q'][$i] ?? 0, 2) }}</td>
                                     @endfor
                                     
-                                    {{-- Capaian terhadap Target Triwulan --}}
-                                    <!-- @for($i=1; $i<=4; $i++)
-                                        @php
-                                            $target = $row['data']['target_q'][$i] ?? 0;
-                                            $realisasi = $row['data']['actual_q'][$i] ?? 0;
-                                            $val = $target > 0 ? ($realisasi / $target * 100) : 0;
-                                        @endphp
-                                        <td class="px-2 py-2 border-r align-middle bg-indigo-50/10 border-b hover:bg-indigo-50 transition-colors">
-                                            <span class="{{ $val >= 100 ? 'text-green-600 font-medium' : ($val > 0 ? 'text-blue-600' : 'text-gray-400') }}">{{ number_format($val, 1) }}%</span>
-                                        </td>
-                                    @endfor
-                                    
-                                    {{-- Capaian terhadap Target Tahun --}}
-                                    @for($i=1; $i<=4; $i++)
-                                        @php
-                                            // Target tahunan adalah target TW4
-                                            $targetTahunan = $row['data']['target_q'][4] ?? 0;
-                                            $realisasiKumulatif = 0;
-                                            for($j=1; $j<=$i; $j++) {
-                                                $realisasiKumulatif += $row['data']['actual_q'][$j] ?? 0;
-                                            }
-                                            $val = $targetTahunan > 0 ? ($realisasiKumulatif / $targetTahunan * 100) : 0;
-                                        @endphp
-                                        <td class="px-2 py-2 bg-emerald-50/10 {{ $i < 4 ? 'border-r' : '' }} align-middle border-b hover:bg-emerald-50 transition-colors">
-                                            <span class="{{ $val >= 100 ? 'text-green-600 font-medium' : ($val > 0 ? 'text-blue-600' : 'text-gray-400') }}">{{ number_format($val, 1) }}%</span>
-                                        </td>
-                                    @endfor -->
                                     {{-- Capaian vs Target TW --}}
                                     @for($i=1; $i<=4; $i++) 
                                         @php $val = $row['capaian']['output']['tw'][$i] ?? 0; @endphp 

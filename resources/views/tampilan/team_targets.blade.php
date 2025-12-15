@@ -104,7 +104,7 @@
                                     <td class="px-4 py-4 align-top bg-blue-50 border-b border-white">
                                         <div class="text-sm font-medium text-blue-900">
                                             @if($isSpecial)
-                                                Target Poin
+                                                Poin
                                             @else
                                                 Tahapan
                                             @endif
@@ -127,18 +127,26 @@
                                             <div class="font-medium text-blue-900">{{ number_format($item->output_real_q4 ?? 0, 2) }}</div>
                                         </td>
                                     @else
-                                        {{-- Indikator Normal: q1_plan dst --}}
+                                        {{-- Untuk q1_plan sampai q4_plan --}}
                                         <td class="px-4 py-4 text-center bg-blue-50 border-b border-white">
-                                            <div class="font-medium text-blue-900">{{ $item->q1_plan ?: '-' }}</div>
+                                            <div class="font-medium text-blue-900">
+                                                {{ $item->q1_plan !== null && $item->q1_plan !== '' ? (int)$item->q1_plan : '-' }}
+                                            </div>
                                         </td>
                                         <td class="px-4 py-4 text-center bg-blue-50 border-b border-white">
-                                            <div class="font-medium text-blue-900">{{ $item->q2_plan ?: '-' }}</div>
+                                            <div class="font-medium text-blue-900">
+                                                {{ $item->q2_plan !== null && $item->q2_plan !== '' ? (int)$item->q2_plan : '-' }}
+                                            </div>
                                         </td>
                                         <td class="px-4 py-4 text-center bg-blue-50 border-b border-white">
-                                            <div class="font-medium text-blue-900">{{ $item->q3_plan ?: '-' }}</div>
+                                            <div class="font-medium text-blue-900">
+                                                {{ $item->q3_plan !== null && $item->q3_plan !== '' ? (int)$item->q3_plan : '-' }}
+                                            </div>
                                         </td>
                                         <td class="px-4 py-4 text-center bg-blue-50 border-b border-white">
-                                            <div class="font-medium text-blue-900">{{ $item->q4_plan ?: '-' }}</div>
+                                            <div class="font-medium text-blue-900">
+                                                {{ $item->q4_plan !== null && $item->q4_plan !== '' ? (int)$item->q4_plan : '-' }}
+                                            </div>
                                         </td>
                                     @endif
 
@@ -158,18 +166,26 @@
                                             <div class="font-medium text-emerald-700">{{ number_format($item->actual_output_q4 ?? 0, 2) }}</div>
                                         </td>
                                     @else
-                                        {{-- Indikator Normal: q1_real dst --}}
+                                        {{-- Untuk q1_real sampai q4_real --}}
                                         <td class="px-4 py-4 text-center bg-blue-50 border-b border-white">
-                                            <div class="font-medium text-emerald-700">{{ $item->q1_real ?: '-' }}</div>
+                                            <div class="font-medium text-emerald-700">
+                                                {{ $item->q1_real !== null && $item->q1_real !== '' ? (int)$item->q1_real : '-' }}
+                                            </div>
                                         </td>
                                         <td class="px-4 py-4 text-center bg-blue-50 border-b border-white">
-                                            <div class="font-medium text-emerald-700">{{ $item->q2_real ?: '-' }}</div>
+                                            <div class="font-medium text-emerald-700">
+                                                {{ $item->q2_real !== null && $item->q2_real !== '' ? (int)$item->q2_real : '-' }}
+                                            </div>
                                         </td>
                                         <td class="px-4 py-4 text-center bg-blue-50 border-b border-white">
-                                            <div class="font-medium text-emerald-700">{{ $item->q3_real ?: '-' }}</div>
+                                            <div class="font-medium text-emerald-700">
+                                                {{ $item->q3_real !== null && $item->q3_real !== '' ? (int)$item->q3_real : '-' }}
+                                            </div>
                                         </td>
                                         <td class="px-4 py-4 text-center bg-blue-50 border-b border-white">
-                                            <div class="font-medium text-emerald-700">{{ $item->q4_real ?: '-' }}</div>
+                                            <div class="font-medium text-emerald-700">
+                                                {{ $item->q4_real !== null && $item->q4_real !== '' ? (int)$item->q4_real : '-' }}
+                                            </div>
                                         </td>
                                     @endif
 
@@ -208,30 +224,46 @@
 
                                         {{-- Rencana OUTPUT Q1-Q4 --}}
                                         <td class="px-4 py-4 text-center bg-purple-50">
-                                            <div class="text-purple-900 font-medium">{{ $item->output_plan ?: '-' }}</div>
+                                            <div class="text-purple-900 font-medium">
+                                                {{ $item->output_plan !== null && $item->output_plan !== '' ? (int)$item->output_plan : '-' }}
+                                            </div>
                                         </td>
                                         <td class="px-4 py-4 text-center bg-purple-50">
-                                            <div class="text-purple-900 font-medium">{{ $item->output_plan ?: '-' }}</div>
+                                            <div class="text-purple-900 font-medium">
+                                                {{ $item->output_plan !== null && $item->output_plan !== '' ? (int)$item->output_plan : '-' }}
+                                            </div>
                                         </td>
                                         <td class="px-4 py-4 text-center bg-purple-50">
-                                            <div class="text-purple-900 font-medium">{{ $item->output_plan ?: '-' }}</div>
+                                            <div class="text-purple-900 font-medium">
+                                                {{ $item->output_plan !== null && $item->output_plan !== '' ? (int)$item->output_plan : '-' }}
+                                            </div>
                                         </td>
                                         <td class="px-4 py-4 text-center bg-purple-50">
-                                            <div class="text-purple-900 font-medium">{{ $item->output_plan ?: '-' }}</div>
+                                            <div class="text-purple-900 font-medium">
+                                                {{ $item->output_plan !== null && $item->output_plan !== '' ? (int)$item->output_plan : '-' }}
+                                            </div>
                                         </td>
 
                                         {{-- Realisasi OUTPUT Q1-Q4 --}}
                                         <td class="px-4 py-4 text-center bg-purple-50">
-                                            <div class="font-medium text-purple-900">{{ $item->output_real_q1 ?: '-' }}</div>
+                                            <div class="font-medium text-purple-900">
+                                                {{ $item->output_real_q1 !== null && $item->output_real_q1 !== '' ? (int)$item->output_real_q1 : '-' }}
+                                            </div>
                                         </td>
                                         <td class="px-4 py-4 text-center bg-purple-50">
-                                            <div class="font-medium text-purple-900">{{ $item->output_real_q2 ?: '-' }}</div>
+                                            <div class="font-medium text-purple-900">
+                                                {{ $item->output_real_q2 !== null && $item->output_real_q2 !== '' ? (int)$item->output_real_q2 : '-' }}
+                                            </div>
                                         </td>
                                         <td class="px-4 py-4 text-center bg-purple-50">
-                                            <div class="font-medium text-purple-900">{{ $item->output_real_q3 ?: '-' }}</div>
+                                            <div class="font-medium text-purple-900">
+                                                {{ $item->output_real_q3 !== null && $item->output_real_q3 !== '' ? (int)$item->output_real_q3 : '-' }}
+                                            </div>
                                         </td>
                                         <td class="px-4 py-4 text-center bg-purple-50">
-                                            <div class="font-medium text-purple-900">{{ $item->output_real_q4 ?: '-' }}</div>
+                                            <div class="font-medium text-purple-900">
+                                                {{ $item->output_real_q4 !== null && $item->output_real_q4 !== '' ? (int)$item->output_real_q4 : '-' }}
+                                            </div>
                                         </td>
                                     @endif
                                 </tr>
@@ -350,6 +382,9 @@
         }
 
         function openEditModal(data, updateUrl) {
+            console.log('DEBUG - Data diterima:', data);
+            console.log('DEBUG - Data actual_output_q1:', data.actual_output_q1);
+            
             const modal = document.getElementById('editModal');
             const form = document.getElementById('editForm');
             
@@ -371,25 +406,35 @@
             const setAlpineValue = (selector, value) => {
                 const el = form.querySelector(selector);
                 if (el) {
+                    // Pastikan value adalah number, bukan string
+                    if (typeof value === 'string') {
+                        value = parseFloat(value) || 0;
+                    }
                     el.value = value;
                     el.dispatchEvent(new Event('input', { bubbles: true }));
+                    console.log('Set value:', selector, '=', value);
+                } else {
+                    console.warn('Element not found:', selector);
                 }
             };
 
             const isSpecial = specialIndicators.includes(data.report_name);
+            console.log('Is special indicator?', isSpecial);
 
             if (isSpecial) {
                 // Indikator Spesial: Set target poin per TW
-                setAlpineValue('input[x-model="o_q1"]', data.output_real_q1 || 0);
-                setAlpineValue('input[x-model="o_q2"]', data.output_real_q2 || 0);
-                setAlpineValue('input[x-model="o_q3"]', data.output_real_q3 || 0);
-                setAlpineValue('input[x-model="o_q4"]', data.output_real_q4 || 0);
+                // HANYA set output_real_q1 sampai output_real_q4
+                setAlpineValue('input[x-model="o_q1"]', parseFloat(data.output_real_q1) || 0);
+                setAlpineValue('input[x-model="o_q2"]', parseFloat(data.output_real_q2) || 0);
+                setAlpineValue('input[x-model="o_q3"]', parseFloat(data.output_real_q3) || 0);
+                setAlpineValue('input[x-model="o_q4"]', parseFloat(data.output_real_q4) || 0);
 
-                // Set realisasi poin per TW
-                setAlpineValue('input[x-model="actual_q1"]', data.actual_output_q1 || 0);
-                setAlpineValue('input[x-model="actual_q2"]', data.actual_output_q2 || 0);
-                setAlpineValue('input[x-model="actual_q3"]', data.actual_output_q3 || 0);
-                setAlpineValue('input[x-model="actual_q4"]', data.actual_output_q4 || 0);
+                // HAPUS bagian ini - karena tidak ada input actual_q di form
+                // setAlpineValue('input[x-model="actual_q1"]', parseFloat(data.actual_output_q1) || 0);
+                // setAlpineValue('input[x-model="actual_q2"]', parseFloat(data.actual_output_q2) || 0);
+                // setAlpineValue('input[x-model="actual_q3"]', parseFloat(data.actual_output_q3) || 0);
+                // setAlpineValue('input[x-model="actual_q4"]', parseFloat(data.actual_output_q4) || 0);
+                
             } else {
                 // Indikator Normal
                 setAlpineValue('input[x-model="plan_tahapan"]', data.q1_plan || 0);

@@ -319,9 +319,259 @@ class PublicationExportController extends Controller
     public function exportTableSasaran()
     {
         $year = session('selected_year', now()->year);
-        // Panggil helper untuk ambil data Sasaran
-        $data = $this->getDataSasaran($year);
-        return $this->generateExcel($year, $data, 'laporan_kinerja_sasaran');
+        // Ambil data normal
+        $dataNormal = $this->getDataSasaran($year);
+        // Ambil data spesial
+        $dataSpesial = $this->getDataSpesialSasaran($year);
+        
+        // Generate Excel gabungan
+        return $this->generateExcelSasaranGabungan($year, $dataNormal, $dataSpesial, 'laporan_kinerja_sasaran');
+    }
+
+    private function generateExcelSasaranGabungan($year, $laporanNormal, $laporanSpesial, $fileNamePrefix) {
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+
+        // --- Header Setup ---
+        $sheet->mergeCells('A1:A3')->setCellValue('A1', 'Nama Sasaran/Laporan');
+        $sheet->mergeCells('B1:B3')->setCellValue('B1', 'Jenis');
+        $sheet->mergeCells('C1:F2')->setCellValue('C1', 'Rencana Kegiatan');
+        $sheet->mergeCells('G1:J2')->setCellValue('G1', 'Realisasi Kegiatan');
+        $sheet->mergeCells('K1:R1')->setCellValue('K1', 'Capaian Kinerja (%)');
+        $sheet->mergeCells('K2:N2')->setCellValue('K2', 'Terhadap Target Triwulanan');
+        $sheet->mergeCells('O2:R2')->setCellValue('O2', 'Terhadap Target Setahun');
+
+        $headersTW = ['TW I', 'TW II', 'TW III', 'TW IV'];
+        foreach($headersTW as $idx => $txt) {
+            $sheet->setCellValue(chr(67+$idx).'3', $txt);
+            $sheet->setCellValue(chr(71+$idx).'3', $txt);
+            $sheet->setCellValue(chr(75+$idx).'3', $txt);
+            $sheet->setCellValue(chr(79+$idx).'3', $txt);
+        }
+
+        // Style Header
+        $headerStyle = [
+            'font' => ['bold' => true, 'color' => ['rgb' => '000000']],
+            'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+            'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+            'fill' => ['fillType' => Fill::FILL_SOLID, 'startColor' => ['rgb' => 'EEEEEE']]
+        ];
+        $sheet->getStyle('A1:R3')->applyFromArray($headerStyle);
+
+        $row = 4;
+
+        // ========== BAGIAN 1: DATA NORMAL (4 baris per item) ==========
+        foreach ($laporanNormal as $item) {
+            $startRow = $row;
+            
+            // Nama
+            $sheet->mergeCells("A{$row}:A".($row+3));
+            $sheet->setCellValue("A{$row}", $item['report_name']);
+            $sheet->getStyle("A{$row}")->getAlignment()->setWrapText(true)->setVertical(Alignment::VERTICAL_TOP);
+
+            // Row 1: Realisasi Tahapan
+            $sheet->setCellValue("B{$row}", "Realisasi Tahapan");
+            for($i=1; $i<=4; $i++) $sheet->setCellValue(chr(66+$i).$row, $item['row1_blue'][$i]??0);
+            for($i=1; $i<=4; $i++) $sheet->setCellValue(chr(70+$i).$row, $item['row1_green'][$i]??0);
+            for($i=1; $i<=4; $i++) $sheet->setCellValue(chr(74+$i).$row, number_format($item['capaian']['tahapan']['tw'][$i],0).'%');
+            for($i=1; $i<=4; $i++) $sheet->setCellValue(chr(78+$i).$row, number_format($item['capaian']['tahapan']['thn'][$i],0).'%');
+            $sheet->getStyle("B{$row}:R{$row}")->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setRGB('EFF6FF');
+            $row++;
+
+            // Row 2: Target Tahapan
+            $sheet->setCellValue("B{$row}", "Target Tahapan");
+            for($i=1; $i<=4; $i++) $sheet->setCellValue(chr(66+$i).$row, $item['row2_blue'][$i]??0);
+            for($i=1; $i<=4; $i++) $sheet->setCellValue(chr(70+$i).$row, $item['row2_green'][$i]??0);
+            $row++;
+            
+            // Merge Capaian Row 1-2
+            for ($c = 75; $c <= 82; $c++) $sheet->mergeCells(chr($c)."{$startRow}:".chr($c).($startRow+1));
+
+            // Row 3: Realisasi Output
+            $outputStartRow = $row;
+            $sheet->setCellValue("B{$row}", "Realisasi Output");
+            for($i=1; $i<=4; $i++) $sheet->setCellValue(chr(66+$i).$row, $item['row3_blue'][$i]??0);
+            for($i=1; $i<=4; $i++) $sheet->setCellValue(chr(70+$i).$row, $item['row3_green'][$i]??0);
+            for($i=1; $i<=4; $i++) $sheet->setCellValue(chr(74+$i).$row, number_format($item['capaian']['output']['tw'][$i],0).'%');
+            for($i=1; $i<=4; $i++) $sheet->setCellValue(chr(78+$i).$row, number_format($item['capaian']['output']['thn'][$i],0).'%');
+            $sheet->getStyle("B{$row}:R{$row}")->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setRGB('FAF5FF');
+            $row++;
+
+            // Row 4: Target Output
+            $sheet->setCellValue("B{$row}", "Target Output");
+            for($i=1; $i<=4; $i++) $sheet->setCellValue(chr(66+$i).$row, $item['row4_blue'][$i]??0);
+            for($i=1; $i<=4; $i++) $sheet->setCellValue(chr(70+$i).$row, $item['row4_green'][$i]??0);
+            $row++;
+
+            // Merge Capaian Row 3-4
+            for ($c = 75; $c <= 82; $c++) $sheet->mergeCells(chr($c)."{$outputStartRow}:".chr($c).($outputStartRow+1));
+        }
+
+        // ========== BAGIAN 2: DATA SPESIAL (2 baris per item) ==========
+        // Tambah separator/header untuk bagian spesial
+        $sheet->mergeCells("A{$row}:R{$row}");
+        $sheet->setCellValue("A{$row}", "INDIKATOR SPESIAL");
+        $sheet->getStyle("A{$row}:R{$row}")->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setRGB('FEF3C7');
+        $sheet->getStyle("A{$row}")->getFont()->setBold(true);
+        $sheet->getStyle("A{$row}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+        $row++;
+
+        foreach ($laporanSpesial as $item) {
+            $startRow = $row;
+            
+            // Nama Laporan - merge 2 baris
+            $sheet->mergeCells("A{$row}:A".($row+1));
+            $sheet->setCellValue("A{$row}", $item['report_name'] . ' (Spesial)');
+            $sheet->getStyle("A{$row}")->getAlignment()->setWrapText(true)->setVertical(Alignment::VERTICAL_TOP);
+
+            // Row 1: Target Poin
+            // Row 1: Poin dan data (baris atas)
+            $sheet->setCellValue("B{$row}", "Poin");
+            for($i=1; $i<=4; $i++) $sheet->setCellValue(chr(66+$i).$row, number_format($item['target_q'][$i] ?? 0, 2)); // C-F: Target
+            for($i=1; $i<=4; $i++) $sheet->setCellValue(chr(70+$i).$row, number_format($item['actual_q'][$i] ?? 0, 2)); // G-J: Realisasi
+            for($i=1; $i<=4; $i++) $sheet->setCellValue(chr(74+$i).$row, number_format($item['capaian']['output']['tw'][$i], 1).'%'); // K-N: Capaian TW
+            for($i=1; $i<=4; $i++) $sheet->setCellValue(chr(78+$i).$row, number_format($item['capaian']['output']['thn'][$i], 1).'%'); // O-R: Capaian THN
+            $sheet->getStyle("B{$row}:R{$row}")->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setRGB('FEF3C7');
+
+            // Row 2: Data capaian (baris bawah)
+            $row++;
+            $sheet->setCellValue("B{$row}", ""); // Kolom B kosong
+            for($i=1; $i<=4; $i++) $sheet->setCellValue(chr(66+$i).$row, ''); // C-F kosong
+            for($i=1; $i<=4; $i++) $sheet->setCellValue(chr(70+$i).$row, ''); // G-J kosong
+            for($i=1; $i<=4; $i++) $sheet->setCellValue(chr(74+$i).$row, ''); // K-N: Capaian TW
+            for($i=1; $i<=4; $i++) $sheet->setCellValue(chr(78+$i).$row, ''); // O-R: Capaian THN
+            $sheet->getStyle("B{$row}:R{$row}")->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setRGB('ECFDF5');
+
+            // Merge vertikal kolom B-J (B sampai J)
+            for($col = 66; $col <= 74; $col++) { // 66=B, 74=J
+                $sheet->mergeCells(chr($col).($row-1).":".chr($col).$row);
+            }
+
+            $row++;
+
+            // Merge Capaian Row 1-2
+            for ($c = 75; $c <= 82; $c++) {
+                $colChar = chr($c);
+                $sheet->mergeCells("{$colChar}{$startRow}:{$colChar}".($startRow+1));
+            }
+        }
+
+        // Global Styling
+        $lastRow = $row - 1;
+        $sheet->getStyle("A1:R{$lastRow}")->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_THIN);
+        $sheet->getStyle("B4:R{$lastRow}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER)->setVertical(Alignment::VERTICAL_CENTER);
+        foreach (range('A', 'R') as $col) $sheet->getColumnDimension($col)->setAutoSize(true);
+        $sheet->getColumnDimension('A')->setWidth(40);
+
+        $fileName = $fileNamePrefix.'_'.$year.'.xlsx';
+        $writer = new Xlsx($spreadsheet);
+
+        return response()->streamDownload(function () use ($writer) {
+            $writer->save('php://output');
+        }, $fileName);
+    }
+
+    // --- EXPORT TABLE ---
+    public function exportTableIndikator()
+    {
+        $year = session('selected_year', now()->year);
+        $data = $this->getDataIndikator($year);
+        return $this->generateExcel($year, $data, 'laporan_kinerja_indikator');
+    }
+
+    private function generateExcel($year, $laporanKinerja, $fileNamePrefix) {
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+
+        // --- Header Setup (Sama seperti sebelumnya) ---
+        $sheet->mergeCells('A1:A3')->setCellValue('A1', 'Nama Sasaran/Laporan');
+        $sheet->mergeCells('B1:B3')->setCellValue('B1', 'Jenis');
+        $sheet->mergeCells('C1:F2')->setCellValue('C1', 'Rencana Kegiatan');
+        $sheet->mergeCells('G1:J2')->setCellValue('G1', 'Realisasi Kegiatan');
+        $sheet->mergeCells('K1:R1')->setCellValue('K1', 'Capaian Kinerja (%)');
+        $sheet->mergeCells('K2:N2')->setCellValue('K2', 'Terhadap Target Triwulanan');
+        $sheet->mergeCells('O2:R2')->setCellValue('O2', 'Terhadap Target Setahun');
+
+        $headersTW = ['TW I', 'TW II', 'TW III', 'TW IV'];
+        foreach($headersTW as $idx => $txt) {
+            $sheet->setCellValue(chr(67+$idx).'3', $txt);
+            $sheet->setCellValue(chr(71+$idx).'3', $txt);
+            $sheet->setCellValue(chr(75+$idx).'3', $txt);
+            $sheet->setCellValue(chr(79+$idx).'3', $txt);
+        }
+
+        // Style Header
+        $headerStyle = [
+            'font' => ['bold' => true, 'color' => ['rgb' => '000000']],
+            'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+            'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+            'fill' => ['fillType' => Fill::FILL_SOLID, 'startColor' => ['rgb' => 'EEEEEE']]
+        ];
+        $sheet->getStyle('A1:R3')->applyFromArray($headerStyle);
+        $sheet->getStyle('C1')->getFont()->getColor()->setRGB('1E3A8A');
+        $sheet->getStyle('G1')->getFont()->getColor()->setRGB('064E3B');
+        $sheet->getStyle('K1')->getFont()->getColor()->setRGB('581C87');
+
+        // Isi Data
+        $row = 4;
+        foreach ($laporanKinerja as $item) {
+            $startRow = $row;
+            
+            // Nama Laporan - merge 4 baris
+            $sheet->mergeCells("A{$row}:A".($row+3));
+            $sheet->setCellValue("A{$row}", $item['report_name']);
+            $sheet->getStyle("A{$row}")->getAlignment()->setWrapText(true)->setVertical(Alignment::VERTICAL_TOP);
+
+            // Row 1: Realisasi Tahapan
+            $sheet->setCellValue("B{$row}", "Realisasi Tahapan");
+            for($i=1; $i<=4; $i++) $sheet->setCellValue(chr(66+$i).$row, $item['row1_blue'][$i]??0);
+            for($i=1; $i<=4; $i++) $sheet->setCellValue(chr(70+$i).$row, $item['row1_green'][$i]??0);
+            for($i=1; $i<=4; $i++) $sheet->setCellValue(chr(74+$i).$row, number_format($item['capaian']['tahapan']['tw'][$i],0).'%');
+            for($i=1; $i<=4; $i++) $sheet->setCellValue(chr(78+$i).$row, number_format($item['capaian']['tahapan']['thn'][$i],0).'%');
+            $sheet->getStyle("B{$row}:R{$row}")->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setRGB('EFF6FF');
+            $row++;
+
+            // Row 2: Target Tahapan
+            $sheet->setCellValue("B{$row}", "Target Tahapan");
+            for($i=1; $i<=4; $i++) $sheet->setCellValue(chr(66+$i).$row, $item['row2_blue'][$i]??0);
+            for($i=1; $i<=4; $i++) $sheet->setCellValue(chr(70+$i).$row, $item['row2_green'][$i]??0);
+            $row++;
+            
+            // Merge Capaian Row 1-2
+            for ($c = 75; $c <= 82; $c++) $sheet->mergeCells(chr($c)."{$startRow}:".chr($c).($startRow+1));
+
+            // Row 3: Realisasi Output
+            $outputStartRow = $row;
+            $sheet->setCellValue("B{$row}", "Realisasi Output");
+            for($i=1; $i<=4; $i++) $sheet->setCellValue(chr(66+$i).$row, $item['row3_blue'][$i]??0);
+            for($i=1; $i<=4; $i++) $sheet->setCellValue(chr(70+$i).$row, $item['row3_green'][$i]??0);
+            for($i=1; $i<=4; $i++) $sheet->setCellValue(chr(74+$i).$row, number_format($item['capaian']['output']['tw'][$i],0).'%');
+            for($i=1; $i<=4; $i++) $sheet->setCellValue(chr(78+$i).$row, number_format($item['capaian']['output']['thn'][$i],0).'%');
+            $sheet->getStyle("B{$row}:R{$row}")->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setRGB('FAF5FF');
+            $row++;
+
+            // Row 4: Target Output
+            $sheet->setCellValue("B{$row}", "Target Output");
+            for($i=1; $i<=4; $i++) $sheet->setCellValue(chr(66+$i).$row, $item['row4_blue'][$i]??0);
+            for($i=1; $i<=4; $i++) $sheet->setCellValue(chr(70+$i).$row, $item['row4_green'][$i]??0);
+            $row++;
+
+            // Merge Capaian Row 3-4
+            for ($c = 75; $c <= 82; $c++) $sheet->mergeCells(chr($c)."{$outputStartRow}:".chr($c).($outputStartRow+1));
+        }
+
+        $lastRow = $row - 1;
+        $sheet->getStyle("A1:R{$lastRow}")->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_THIN);
+        $sheet->getStyle("B4:R{$lastRow}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER)->setVertical(Alignment::VERTICAL_CENTER);
+        foreach (range('A', 'R') as $col) $sheet->getColumnDimension($col)->setAutoSize(true);
+        $sheet->getColumnDimension('A')->setWidth(40);
+
+        $fileName = $fileNamePrefix.'_'.$year.'.xlsx';
+        $writer = new Xlsx($spreadsheet);
+
+        return response()->streamDownload(function () use ($writer) {
+            $writer->save('php://output');
+        }, $fileName);
     }
 
     private function getSasaranStrategis() {
@@ -441,113 +691,6 @@ class PublicationExportController extends Controller
             'row3_blue' => $row3_Blue, 'row3_green' => $row3_Green,
             'row4_blue' => $row4_Blue, 'row4_green' => $row4_Green,
             'capaian' => $capaian
-        ];
-    }
-
-    private function generateExcel($year, $laporanKinerja, $fileNamePrefix) {
-        $spreadsheet = new Spreadsheet();
-        $sheet = $spreadsheet->getActiveSheet();
-
-        // --- Header Setup (Sama seperti sebelumnya) ---
-        $sheet->mergeCells('A1:A3')->setCellValue('A1', 'Nama Sasaran/Laporan');
-        $sheet->mergeCells('B1:B3')->setCellValue('B1', 'Jenis');
-        $sheet->mergeCells('C1:F2')->setCellValue('C1', 'Rencana Kegiatan');
-        $sheet->mergeCells('G1:J2')->setCellValue('G1', 'Realisasi Kegiatan');
-        $sheet->mergeCells('K1:R1')->setCellValue('K1', 'Capaian Kinerja (%)');
-        $sheet->mergeCells('K2:N2')->setCellValue('K2', 'Terhadap Target Triwulanan');
-        $sheet->mergeCells('O2:R2')->setCellValue('O2', 'Terhadap Target Setahun');
-
-        $headersTW = ['TW I', 'TW II', 'TW III', 'TW IV'];
-        foreach($headersTW as $idx => $txt) {
-            $sheet->setCellValue(chr(67+$idx).'3', $txt);
-            $sheet->setCellValue(chr(71+$idx).'3', $txt);
-            $sheet->setCellValue(chr(75+$idx).'3', $txt);
-            $sheet->setCellValue(chr(79+$idx).'3', $txt);
-        }
-
-        // Style Header
-        $headerStyle = [
-            'font' => ['bold' => true, 'color' => ['rgb' => '000000']],
-            'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
-            'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-            'fill' => ['fillType' => Fill::FILL_SOLID, 'startColor' => ['rgb' => 'EEEEEE']]
-        ];
-        $sheet->getStyle('A1:R3')->applyFromArray($headerStyle);
-
-        // Isi Data
-        $row = 4;
-        foreach ($laporanKinerja as $item) {
-            $startRow = $row;
-            // Nama
-            $sheet->mergeCells("A{$row}:A".($row+3));
-            $sheet->setCellValue("A{$row}", $item['report_name']);
-            $sheet->getStyle("A{$row}")->getAlignment()->setWrapText(true)->setVertical(Alignment::VERTICAL_TOP);
-
-            // Row 1
-            $sheet->setCellValue("B{$row}", "Realisasi Tahapan");
-            for($i=1; $i<=4; $i++) $sheet->setCellValue(chr(66+$i).$row, $item['row1_blue'][$i]??0);
-            for($i=1; $i<=4; $i++) $sheet->setCellValue(chr(70+$i).$row, $item['row1_green'][$i]??0);
-            for($i=1; $i<=4; $i++) $sheet->setCellValue(chr(74+$i).$row, number_format($item['capaian']['tahapan']['tw'][$i],0).'%');
-            for($i=1; $i<=4; $i++) $sheet->setCellValue(chr(78+$i).$row, number_format($item['capaian']['tahapan']['thn'][$i],0).'%');
-            $sheet->getStyle("B{$row}:R{$row}")->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setRGB('EFF6FF');
-            $row++;
-
-            // Row 2
-            $sheet->setCellValue("B{$row}", "Target Tahapan");
-            for($i=1; $i<=4; $i++) $sheet->setCellValue(chr(66+$i).$row, $item['row2_blue'][$i]??0);
-            for($i=1; $i<=4; $i++) $sheet->setCellValue(chr(70+$i).$row, $item['row2_green'][$i]??0);
-            $row++;
-            
-            // Merge Capaian Row 1-2
-            for ($c = 75; $c <= 82; $c++) $sheet->mergeCells(chr($c)."{$startRow}:".chr($c).($startRow+1));
-
-            // Row 3
-            $outputStartRow = $row;
-            $sheet->setCellValue("B{$row}", "Realisasi Output");
-            for($i=1; $i<=4; $i++) $sheet->setCellValue(chr(66+$i).$row, $item['row3_blue'][$i]??0);
-            for($i=1; $i<=4; $i++) $sheet->setCellValue(chr(70+$i).$row, $item['row3_green'][$i]??0);
-            for($i=1; $i<=4; $i++) $sheet->setCellValue(chr(74+$i).$row, number_format($item['capaian']['output']['tw'][$i],0).'%');
-            for($i=1; $i<=4; $i++) $sheet->setCellValue(chr(78+$i).$row, number_format($item['capaian']['output']['thn'][$i],0).'%');
-            $sheet->getStyle("B{$row}:R{$row}")->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setRGB('FAF5FF');
-            $row++;
-
-            // Row 4
-            $sheet->setCellValue("B{$row}", "Target Output");
-            for($i=1; $i<=4; $i++) $sheet->setCellValue(chr(66+$i).$row, $item['row4_blue'][$i]??0);
-            for($i=1; $i<=4; $i++) $sheet->setCellValue(chr(70+$i).$row, $item['row4_green'][$i]??0);
-            $row++;
-
-            // Merge Capaian Row 3-4
-            for ($c = 75; $c <= 82; $c++) $sheet->mergeCells(chr($c)."{$outputStartRow}:".chr($c).($outputStartRow+1));
-        }
-
-        $lastRow = $row - 1;
-        $sheet->getStyle("A1:R{$lastRow}")->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_THIN);
-        $sheet->getStyle("B4:R{$lastRow}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER)->setVertical(Alignment::VERTICAL_CENTER);
-        foreach (range('A', 'R') as $col) $sheet->getColumnDimension($col)->setAutoSize(true);
-        $sheet->getColumnDimension('A')->setWidth(40);
-
-        $fileName = $fileNamePrefix.'_'.$year.'.xlsx';
-        $writer = new Xlsx($spreadsheet);
-
-        return response()->streamDownload(function () use ($writer) {
-            $writer->save('php://output');
-        }, $fileName);
-    }
-
-    // Definisi 3 indikator spesial (4 laporan)
-    private function getSasaranSpesial() {
-        return [
-            "Terwujudnya Penguatan Penyelenggaraan Pembinaan Statistik Sektoral K/L/Pemda" => [
-                "Tingkat Penyelenggaraan Pembinaan Statistik Sektoral sesuai Standar"
-            ],
-            "Terwujudnya Kemudahan Akses Data BPS" => [
-                "Indeks Pelayanan Publik - Penilaian Mandiri"
-            ],
-            "Terwujudnya Dukungan Manajemen pada BPS Provinsi dan BPS Kabupaten/Kota" => [
-                "Nilai SAKIP oleh Inspektorat",
-                "Indeks Implementasi BerAKHLAK"
-            ]
         ];
     }
 
@@ -711,23 +854,27 @@ class PublicationExportController extends Controller
             $sheet->setCellValue("A{$row}", $item['report_name']);
             $sheet->getStyle("A{$row}")->getAlignment()->setWrapText(true)->setVertical(Alignment::VERTICAL_TOP);
 
-            // Row 1: Target Poin
-            $sheet->setCellValue("B{$row}", "Target Poin");
-            for($i=1; $i<=4; $i++) $sheet->setCellValue(chr(66+$i).$row, $item['target_q'][$i] ?? 0);
-            // Kolom Realisasi dikosongkan untuk baris Target
-            for($i=1; $i<=4; $i++) $sheet->setCellValue(chr(70+$i).$row, '');
-            // Capaian
-            for($i=1; $i<=4; $i++) $sheet->setCellValue(chr(74+$i).$row, number_format($item['capaian']['output']['tw'][$i], 0).'%');
-            for($i=1; $i<=4; $i++) $sheet->setCellValue(chr(78+$i).$row, number_format($item['capaian']['output']['thn'][$i], 0).'%');
-            $sheet->getStyle("B{$row}:R{$row}")->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setRGB('EFF6FF');
-            $row++;
+            $sheet->setCellValue("B{$row}", "Poin");
+            for($i=1; $i<=4; $i++) $sheet->setCellValue(chr(66+$i).$row, number_format($item['target_q'][$i] ?? 0, 2)); // C-F: Target
+            for($i=1; $i<=4; $i++) $sheet->setCellValue(chr(70+$i).$row, number_format($item['actual_q'][$i] ?? 0, 2)); // G-J: Realisasi
+            for($i=1; $i<=4; $i++) $sheet->setCellValue(chr(74+$i).$row, number_format($item['capaian']['output']['tw'][$i], 1).'%'); // K-N: Capaian TW
+            for($i=1; $i<=4; $i++) $sheet->setCellValue(chr(78+$i).$row, number_format($item['capaian']['output']['thn'][$i], 1).'%'); // O-R: Capaian THN
+            $sheet->getStyle("B{$row}:R{$row}")->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setRGB('FEF3C7');
 
-            // Row 2: Realisasi Poin
-            $sheet->setCellValue("B{$row}", "Realisasi Poin");
-            // Kolom Target dikosongkan untuk baris Realisasi
-            for($i=1; $i<=4; $i++) $sheet->setCellValue(chr(66+$i).$row, '');
-            for($i=1; $i<=4; $i++) $sheet->setCellValue(chr(70+$i).$row, $item['actual_q'][$i] ?? 0);
+            // Row 2: Data capaian (baris bawah)
+            $row++;
+            $sheet->setCellValue("B{$row}", ""); // Kolom B kosong
+            for($i=1; $i<=4; $i++) $sheet->setCellValue(chr(66+$i).$row, ''); // C-F kosong
+            for($i=1; $i<=4; $i++) $sheet->setCellValue(chr(70+$i).$row, ''); // G-J kosong
+            for($i=1; $i<=4; $i++) $sheet->setCellValue(chr(74+$i).$row, ''); // K-N: Capaian TW
+            for($i=1; $i<=4; $i++) $sheet->setCellValue(chr(78+$i).$row, ''); // O-R: Capaian THN
             $sheet->getStyle("B{$row}:R{$row}")->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setRGB('ECFDF5');
+
+            // Merge vertikal kolom B-J (B sampai J)
+            for($col = 66; $col <= 74; $col++) { // 66=B, 74=J
+                $sheet->mergeCells(chr($col).($row-1).":".chr($col).$row);
+            }
+
             $row++;
 
             // Merge Capaian Row 1-2
@@ -751,4 +898,19 @@ class PublicationExportController extends Controller
         }, $fileName);
     }
     
+    // Definisi 3 indikator spesial (4 laporan)
+    private function getSasaranSpesial() {
+        return [
+            "Terwujudnya Penguatan Penyelenggaraan Pembinaan Statistik Sektoral K/L/Pemda" => [
+                "Tingkat Penyelenggaraan Pembinaan Statistik Sektoral sesuai Standar"
+            ],
+            "Terwujudnya Kemudahan Akses Data BPS" => [
+                "Indeks Pelayanan Publik - Penilaian Mandiri"
+            ],
+            "Terwujudnya Dukungan Manajemen pada BPS Provinsi dan BPS Kabupaten/Kota" => [
+                "Nilai SAKIP oleh Inspektorat",
+                "Indeks Implementasi BerAKHLAK"
+            ]
+        ];
+    }
 }

@@ -61,8 +61,8 @@
                         <option value="Laporan Analisis dan Pengembangan Statistik">Laporan Analisis dan Pengembangan Statistik</option>
                     </optgroup>
                     
-                    {{-- Tambah optgroup untuk 3 Indikator Spesial --}}
-                    <optgroup label="3 Indikator Spesial">
+                    {{-- Tambah optgroup untuk 4 Indikator Spesial --}}
+                    <optgroup label="Indikator Spesial">
                         <option value="Tingkat Penyelenggaraan Pembinaan Statistik Sektoral sesuai Standar">Tingkat Penyelenggaraan Pembinaan Statistik Sektoral sesuai Standar</option>
                         <option value="Indeks Pelayanan Publik - Penilaian Mandiri">Indeks Pelayanan Publik - Penilaian Mandiri</option>
                         <option value="Nilai SAKIP oleh Inspektorat">Nilai SAKIP oleh Inspektorat</option>
@@ -104,7 +104,7 @@
     </div>
 
     {{-- BAGIAN 2: TARGET TAHAPAN (Hanya untuk Indikator Normal) --}}
-    <div x-show="!isSpecial" class="border-b pb-4">
+    <div x-show="!isSpecial" x-cloak class="border-b pb-4">
         <h4 class="text-sm font-bold text-blue-800 mb-3">Target Kinerja Tahapan</h4>
         <div class="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
             <div>
@@ -135,69 +135,60 @@
         </div>
     </div>
 
-    {{-- BAGIAN 3A: TARGET OUTPUT (Untuk Indikator Normal) --}}
-    <div x-show="!isSpecial" class="border-b pb-4">
-        <h4 class="text-sm font-bold text-purple-800 mb-3">Target Kinerja Output</h4>
-        <div class="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
-            <div>
+    {{-- BAGIAN 3: TARGET OUTPUT/POIN (Unified untuk Normal & Spesial) --}}
+    <div class="border-b pb-4">
+        <h4 class="text-sm font-bold text-purple-800 mb-3" x-text="isSpecial ? 'Target Poin per Triwulan' : 'Target Kinerja Output'"></h4>
+        <p class="text-xs text-gray-500 mb-3" x-show="isSpecial">Masukkan target poin yang harus dicapai di setiap triwulan (bisa berbeda-beda). <strong>Gunakan titik (.) untuk desimal.</strong></p>
+        
+        <div class="grid gap-4 items-end" :class="isSpecial ? 'grid-cols-2 md:grid-cols-4' : 'grid-cols-1 md:grid-cols-5'">
+            {{-- Total Output (Hanya untuk Normal) --}}
+            <div x-show="!isSpecial">
                 <label class="block text-xs font-medium text-gray-600 mb-1">Total Output</label>
                 <input type="number" name="output_plan" x-model="plan_output" min="0" 
                     class="w-full border-gray-300 rounded-lg text-sm p-2 focus:ring-blue-500 focus:border-blue-500" placeholder="0">
             </div>
+            
+            {{-- Target TW I --}}
             <div>
-                <label class="block text-xs font-medium text-gray-600 mb-1">Target TW I</label>
-                <input type="number" name="output_real_q1" x-model="o_q1" min="0" 
-                    class="w-full border-gray-300 rounded-lg text-sm p-2" placeholder="0">
+                <label class="block text-xs font-medium text-gray-600 mb-1" x-text="isSpecial ? 'Target TW I' : 'Target TW I'"></label>
+                <input type="number" name="output_real_q1" x-model="o_q1" min="0" step="any"
+                    :class="isSpecial ? 'border-purple-300 bg-purple-50 focus:ring-purple-500 focus:border-purple-500' : 'border-gray-300'"
+                    class="w-full rounded-lg text-sm p-2" :placeholder="isSpecial ? '0.00' : '0'">
             </div>
+            
+            {{-- Target TW II --}}
             <div>
                 <label class="block text-xs font-medium text-gray-600 mb-1">Target TW II</label>
-                <input type="number" name="output_real_q2" x-model="o_q2" min="0" 
-                    class="w-full border-gray-300 rounded-lg text-sm p-2" placeholder="0">
+                <input type="number" name="output_real_q2" x-model="o_q2" min="0" step="any"
+                    :class="isSpecial ? 'border-purple-300 bg-purple-50 focus:ring-purple-500 focus:border-purple-500' : 'border-gray-300'"
+                    class="w-full rounded-lg text-sm p-2" :placeholder="isSpecial ? '0.00' : '0'">
             </div>
+            
+            {{-- Target TW III --}}
             <div>
                 <label class="block text-xs font-medium text-gray-600 mb-1">Target TW III</label>
-                <input type="number" name="output_real_q3" x-model="o_q3" min="0" 
-                    class="w-full border-gray-300 rounded-lg text-sm p-2" placeholder="0">
+                <input type="number" name="output_real_q3" x-model="o_q3" min="0" step="any"
+                    :class="isSpecial ? 'border-purple-300 bg-purple-50 focus:ring-purple-500 focus:border-purple-500' : 'border-gray-300'"
+                    class="w-full rounded-lg text-sm p-2" :placeholder="isSpecial ? '0.00' : '0'">
             </div>
+            
+            {{-- Target TW IV --}}
             <div>
                 <label class="block text-xs font-medium text-gray-600 mb-1">Target TW IV</label>
-                <input type="number" name="output_real_q4" x-model="o_q4" min="0" 
-                    class="w-full border-gray-300 rounded-lg text-sm p-2" placeholder="0">
+                <input type="number" name="output_real_q4" x-model="o_q4" min="0" step="any"
+                    :class="isSpecial ? 'border-purple-300 bg-purple-50 focus:ring-purple-500 focus:border-purple-500' : 'border-gray-300'"
+                    class="w-full rounded-lg text-sm p-2" :placeholder="isSpecial ? '0.00' : '0'">
             </div>
+        </div>
+        
+        <div class="mt-2 space-y-1">
+            <p class="text-xs text-gray-400 italic" x-show="isSpecial">* Gunakan titik (.) untuk pemisah desimal, contoh: 25.50</p>
+            <p class="text-xs text-gray-400 italic" x-show="isSpecial">* Realisasi poin diinput melalui halaman Daftar Publikasi</p>
         </div>
     </div>
 
-    {{-- BAGIAN 3B: TARGET POIN SAJA (Khusus Indikator Spesial) - Hapus Realisasi --}}
-    <div x-show="isSpecial" class="border-b pb-4">
-        <h4 class="text-sm font-bold text-purple-800 mb-3">Target Poin per Triwulan</h4>
-        <p class="text-xs text-gray-500 mb-3">Masukkan target poin yang harus dicapai di setiap triwulan (bisa berbeda-beda)</p>
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div>
-                <label class="block text-xs font-medium text-gray-600 mb-1">Target TW I</label>
-                <input type="number" name="output_real_q1" x-model="o_q1" min="0" step="0.01"
-                    class="w-full border-purple-300 bg-purple-50 rounded-lg text-sm p-2 focus:ring-purple-500 focus:border-purple-500" placeholder="0">
-            </div>
-            <div>
-                <label class="block text-xs font-medium text-gray-600 mb-1">Target TW II</label>
-                <input type="number" name="output_real_q2" x-model="o_q2" min="0" step="0.01"
-                    class="w-full border-purple-300 bg-purple-50 rounded-lg text-sm p-2 focus:ring-purple-500 focus:border-purple-500" placeholder="0">
-            </div>
-            <div>
-                <label class="block text-xs font-medium text-gray-600 mb-1">Target TW III</label>
-                <input type="number" name="output_real_q3" x-model="o_q3" min="0" step="0.01"
-                    class="w-full border-purple-300 bg-purple-50 rounded-lg text-sm p-2 focus:ring-purple-500 focus:border-purple-500" placeholder="0">
-            </div>
-            <div>
-                <label class="block text-xs font-medium text-gray-600 mb-1">Target TW IV</label>
-                <input type="number" name="output_real_q4" x-model="o_q4" min="0" step="0.01"
-                    class="w-full border-purple-300 bg-purple-50 rounded-lg text-sm p-2 focus:ring-purple-500 focus:border-purple-500" placeholder="0">
-            </div>
-        </div>
-        <p class="text-xs text-gray-400 mt-2 italic">* Realisasi poin diinput melalui halaman Daftar Publikasi</p>
-    </div>
-
-    {{-- BAGIAN 5: OPSI BULANAN (Hanya untuk Indikator Normal) --}}
-    <div x-show="!isSpecial" class="monthly-options-wrapper">
+    {{-- BAGIAN 4: OPSI BULANAN (Hanya untuk Indikator Normal) --}}
+    <div x-show="!isSpecial" x-cloak class="monthly-options-wrapper">
         <div class="flex items-center gap-2 mb-3">
             <input type="checkbox" name="is_monthly" id="is_monthly" x-model="isMonthly" value="1"
                 class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">

@@ -447,16 +447,32 @@
                                     <div class="text-xs font-bold text-purple-900">Target Output</div>
                                 </td>
                                 {{-- Target Output: Plan (Tetap sama) --}}
-                                <td class="px-4 py-2 text-center text-purple-900 font-bold text-xs">{{ $publication->teamTarget->output_plan ?? '-' }}</td>
-                                <td class="px-4 py-2 text-center text-purple-900 font-bold text-xs">{{ $publication->teamTarget->output_plan ?? '-' }}</td>
-                                <td class="px-4 py-2 text-center text-purple-900 font-bold text-xs">{{ $publication->teamTarget->output_plan ?? '-' }}</td>
-                                <td class="px-4 py-2 text-center text-purple-900 font-bold text-xs">{{ $publication->teamTarget->output_plan ?? '-' }}</td>
-                                
+                                <td class="px-4 py-2 text-center text-purple-900 font-bold text-xs">
+                                    {{ $publication->teamTarget->output_plan !== null && $publication->teamTarget->output_plan !== '' ? (int)$publication->teamTarget->output_plan : '-' }}
+                                </td>
+                                <td class="px-4 py-2 text-center text-purple-900 font-bold text-xs">
+                                    {{ $publication->teamTarget->output_plan !== null && $publication->teamTarget->output_plan !== '' ? (int)$publication->teamTarget->output_plan : '-' }}
+                                </td>
+                                <td class="px-4 py-2 text-center text-purple-900 font-bold text-xs">
+                                    {{ $publication->teamTarget->output_plan !== null && $publication->teamTarget->output_plan !== '' ? (int)$publication->teamTarget->output_plan : '-' }}
+                                </td>
+                                <td class="px-4 py-2 text-center text-purple-900 font-bold text-xs">
+                                    {{ $publication->teamTarget->output_plan !== null && $publication->teamTarget->output_plan !== '' ? (int)$publication->teamTarget->output_plan : '-' }}
+                                </td>
+
                                 {{-- Target Output: Realisasi (Gunakan Data Per Triwulan) --}}
-                                <td class="px-4 py-2 text-center text-purple-900 font-bold text-xs">{{ $publication->teamTarget->output_real_q1 ?? '-' }}</td>
-                                <td class="px-4 py-2 text-center text-purple-900 font-bold text-xs">{{ $publication->teamTarget->output_real_q2 ?? '-' }}</td>
-                                <td class="px-4 py-2 text-center text-purple-900 font-bold text-xs">{{ $publication->teamTarget->output_real_q3 ?? '-' }}</td>
-                                <td class="px-4 py-2 text-center text-purple-900 font-bold text-xs">{{ $publication->teamTarget->output_real_q4 ?? '-' }}</td>
+                                <td class="px-4 py-2 text-center text-purple-900 font-bold text-xs">
+                                    {{ $publication->teamTarget->output_real_q1 !== null && $publication->teamTarget->output_real_q1 !== '' ? (int)$publication->teamTarget->output_real_q1 : '-' }}
+                                </td>
+                                <td class="px-4 py-2 text-center text-purple-900 font-bold text-xs">
+                                    {{ $publication->teamTarget->output_real_q2 !== null && $publication->teamTarget->output_real_q2 !== '' ? (int)$publication->teamTarget->output_real_q2 : '-' }}
+                                </td>
+                                <td class="px-4 py-2 text-center text-purple-900 font-bold text-xs">
+                                    {{ $publication->teamTarget->output_real_q3 !== null && $publication->teamTarget->output_real_q3 !== '' ? (int)$publication->teamTarget->output_real_q3 : '-' }}
+                                </td>
+                                <td class="px-4 py-2 text-center text-purple-900 font-bold text-xs">
+                                    {{ $publication->teamTarget->output_real_q4 !== null && $publication->teamTarget->output_real_q4 !== '' ? (int)$publication->teamTarget->output_real_q4 : '-' }}
+                                </td>
                             </tr>
 
                         @endif
